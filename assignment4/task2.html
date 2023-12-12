@@ -1,0 +1,43 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<select id="countries"></select>
+<select id="states"></select>
+
+<script>
+  let countriesData; // Global variable to store retrieved data
+
+  $(document).ready(function () {
+    function populateCountries() {
+      $.ajax({
+        url: "https://countriesnow.space/api/v0.1/countries/states",
+        method: "GET",
+        success: function (data) {
+          countriesData = data.data; // Store data in a global variable
+          const countryDropdown = $("#countries");
+          countriesData.forEach(function (country) {
+            countryDropdown.append(
+              `<option value="${country.name}">${country.name}</option>`
+            );
+          });
+
+          // Trigger change event to populate states for the default selected country
+          countryDropdown.change();
+        },
+      });
+    }
+
+    populateCountries();
+
+    $("#countries").on("change", function () {
+      const selectedCountry = $(this).val();
+      const countryStates = countriesData.find(
+        (country) => country.name === selectedCountry
+      ).states;
+      const stateDropdown = $("#states");
+      stateDropdown.empty();
+      countryStates.forEach(function (state) {
+        stateDropdown.append(`<option value="${state.name}">${state.name}</option>`);
+      });
+    });
+  });
+</script>

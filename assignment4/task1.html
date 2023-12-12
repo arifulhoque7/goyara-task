@@ -1,0 +1,51 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div id="posts"></div>
+<button id="prevBtn">Previous</button>
+<button id="nextBtn">Next</button>
+
+<script>
+  $(document).ready(function () {
+    const postsPerPage = 10;
+    let currentPage = 1;
+
+    function displayPosts(posts) {
+      $("#posts").empty();
+      for (
+        let i = (currentPage - 1) * postsPerPage;
+        i < currentPage * postsPerPage;
+        i++
+      ) {
+        if (posts[i]) {
+          $("#posts").append(
+            `<div><h3>${posts[i].title}</h3><p>${posts[i].body}</p></div>`
+          );
+        }
+      }
+    }
+
+    function getPosts() {
+      $.ajax({
+        url: "https://jsonplaceholder.typicode.com/posts",
+        method: "GET",
+        success: function (data) {
+          displayPosts(data);
+        },
+      });
+    }
+
+    $("#prevBtn").on("click", function () {
+      if (currentPage > 1) {
+        currentPage--;
+        getPosts();
+      }
+    });
+
+    $("#nextBtn").on("click", function () {
+      currentPage++;
+      getPosts();
+    });
+
+    getPosts();
+  });
+</script>
